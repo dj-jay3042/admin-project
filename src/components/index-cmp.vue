@@ -213,7 +213,9 @@ export default {
             alert("Selected Row Id Is : row" + id);
         },
         remove(id) {
-            axios.post('http://127.0.0.1:8000/api/data/deleteUser', { id: id })
+            axios.post('http://127.0.0.1:8000/api/data/deleteUser', {
+                    id: id
+                })
                 .then(response => {
                     console.log(response);
 
