@@ -223,7 +223,6 @@ export default {
                 .catch(error => {
                     console.error(error);
                 });
-            // alert("User Deleted Successfully!");
             this.loadData();
         },
     },
