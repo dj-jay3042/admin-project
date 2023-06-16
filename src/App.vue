@@ -1,8 +1,11 @@
 <template>
     <headerFile />
     <sidebarFile :getTab="getComp"/>
-
-    <component :is="tab" />
+    
+    <div style="height: 830px;overflow-y: auto;">
+        <br>
+        <component :is="tab" />
+    </div>
 
     <footerFile />
 </template>

@@ -21,8 +21,11 @@
                                             <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter username" v-model="username">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputPassword1">Password</label>
-                                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" v-model="password">
+                                            <label for="passwd">Password</label>
+                                            <div class="input-group input-group">
+                                                <input :type="showPassword ? 'text' : 'password'" id="passwd" class="form-control" placeholder="Password" v-model="password">
+                                                <span class="input-group-text" v-on:click="showPassword = !showPassword"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></span>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="utype">User Type</label>
@@ -76,6 +79,7 @@ export default {
             username: "",
             password: "",
             usertype: "",
+            showPassword: false,
         }
     },
     methods: {
