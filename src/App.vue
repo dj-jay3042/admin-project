@@ -1,28 +1,20 @@
 <template>
-    <headerFile />
-    <sidebarFile :getTab="getComp"/>
-    
-    <div style="height: 818px;overflow-y: auto;">
-        <br>
+    <!-- <headerFile /> -->
+    <masterFile :getTab="getComp">
         <component :is="tab" />
-    </div>
-
-    <footerFile />
+    </masterFile>
+    <!-- <footerFile /> -->
 </template>
 
 <script>
-import headerFile from "./components/master/header-master.vue";
-import sidebarFile from "./components/master/sidebar-master.vue";
-import footerFile from "./components/master/footer-master.vue";
+import masterFile from "./components/master/master-page.vue";
 import indexFile from './components/index-cmp.vue';
 import formFile from './components/form-cmp.vue';
 
 export default {
     name: 'App',
     components: {
-        headerFile,
-        sidebarFile,
-        footerFile,
+        masterFile,
         indexFile,
         formFile
     },

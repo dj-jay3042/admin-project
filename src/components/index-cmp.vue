@@ -1,102 +1,94 @@
 <template>
 <div>
-    <div class="wrapper">
-        <div class="content-wrapper">
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <!-- small box -->
-                            <div class="small-box bg-success">
-                                <div class="inner">
-                                    <h3>{{ time }}</h3>
 
-                                    <p>{{ currentDate }}</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-clock"></i>
-                                </div>
-                                <a href="#" class="small-box-footer">Current Time <i class="fas fa-arrow-circle-right"></i></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <!-- small box -->
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                    <h3>{{ Time }}</h3>
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ time }}</h3>
 
-                                    <p>{{ currentDate }}</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-clock"></i>
-                                </div>
-                                <a href="#" class="small-box-footer">Worked Hours <i class="fas fa-arrow-circle-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
+                    <p>{{ currentDate }}</p>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-success custom-control-input-outline" type="checkbox" id="customCheckbox5" v-on:change="toggleCheckboxes" v-model="selectAll">
-                                                    <label for="customCheckbox5" class="custom-control-label">Id</label>
-                                                </div>
-                                            </th>
-                                            <th>Username</th>
-                                            <th>Password</th>
-                                            <th>User Type</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="item, index in data.slice(startIndex, endIndex + 1)" v-bind:key="item.id" :id="'row' + item.id">
-                                            <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-success" type="checkbox" :id="'chk' + item.id" :checked="chkAll">
-                                                    <label :for="'chk' + item.id" class="custom-control-label">{{ getSequentialId(index) }}</label>
-                                                </div>
-                                            </td>
-                                            <td :id="'row' + item.id + 'username'">{{ item.username }}</td>
-                                            <td :id="'row' + item.id + 'password'">{{ item.password }}</td>
-                                            <td :id="'row' + item.id + 'usertype'">{{ (item.usertype == 1) ? ("Admin") : ("User") }}</td>
-                                            <td>
-                                                <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="edit(item.id)">
-                                                    <i class="fas fa-edit"></i><strong>Edit </strong>
-                                                </button>
-                                                <button class="btn btn-app bg-danger" v-on:click="remove(item.id)">
-                                                    <i class="fas fa-trash"></i><strong>Delete </strong>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="5">
-                                                <div class="col-sm-12 col-md-7">
-                                                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                                                        <ul class="pagination">
-                                                            <li class="paginate_button page-item previous" id="example1_previous" :class="{'disabled': currentPage === 1}"><button class="page-link" @click="previousPage">Previous</button></li>
-                                                            <li class="paginate_button page-item" :class="{ 'active': currentPage === page }" v-for="page in totalPages" :key="page" @click="currentPage = page"><button class="page-link">{{ page }}</button></li>
-                                                            <li class="paginate_button page-item next" id="example1_next" :class="{'disabled': currentPage === totalPages}"><button class="page-link" @click="nextPage">Next</button></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <div class="icon">
+                    <i class="ion ion-clock"></i>
                 </div>
-            </section>
+                <a href="#" class="small-box-footer">Current Time <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ Time }}</h3>
+
+                    <p>{{ currentDate }}</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-clock"></i>
+                </div>
+                <a href="#" class="small-box-footer">Worked Hours <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input custom-control-input-success custom-control-input-outline" type="checkbox" id="customCheckbox5" v-on:change="toggleCheckboxes" v-model="selectAll">
+                                    <label for="customCheckbox5" class="custom-control-label">Id</label>
+                                </div>
+                            </th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>User Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item, index in data.slice(startIndex, endIndex + 1)" v-bind:key="item.id" :id="'row' + item.id">
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input custom-control-input-success" type="checkbox" :id="'chk' + item.id" :checked="chkAll">
+                                    <label :for="'chk' + item.id" class="custom-control-label">{{ getSequentialId(index) }}</label>
+                                </div>
+                            </td>
+                            <td :id="'row' + item.id + 'username'">{{ item.username }}</td>
+                            <td :id="'row' + item.id + 'password'">{{ item.password }}</td>
+                            <td :id="'row' + item.id + 'usertype'">{{ (item.usertype == 1) ? ("Admin") : ("User") }}</td>
+                            <td>
+                                <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="edit(item.id)">
+                                    <i class="fas fa-edit"></i><strong>Edit </strong>
+                                </button>
+                                <button class="btn btn-app bg-danger" v-on:click="remove(item.id)">
+                                    <i class="fas fa-trash"></i><strong>Delete </strong>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <div class="col-sm-12 col-md-7">
+                                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                        <ul class="pagination">
+                                            <li class="paginate_button page-item previous" id="example1_previous" :class="{'disabled': currentPage === 1}"><button class="page-link" @click="previousPage">Previous</button></li>
+                                            <li class="paginate_button page-item" :class="{ 'active': currentPage === page }" v-for="page in totalPages" :key="page" @click="currentPage = page"><button class="page-link">{{ page }}</button></li>
+                                            <li class="paginate_button page-item next" id="example1_next" :class="{'disabled': currentPage === totalPages}"><button class="page-link" @click="nextPage">Next</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </div>
