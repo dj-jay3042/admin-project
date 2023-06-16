@@ -162,7 +162,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .link {
     background: none;
     text-align: left;
