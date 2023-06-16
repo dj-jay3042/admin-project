@@ -2,7 +2,7 @@
     <headerFile />
     <sidebarFile :getTab="getComp"/>
     
-    <div style="height: 830px;overflow-y: auto;">
+    <div style="height: 818px;overflow-y: auto;">
         <br>
         <component :is="tab" />
     </div>
