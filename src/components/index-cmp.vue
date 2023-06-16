@@ -1,6 +1,5 @@
 <template>
 <div>
-
     <div class="row">
         <div class="col-lg-6">
             <!-- small box -->
@@ -110,7 +109,7 @@ export default {
             chkAll: false,
             checkedItems: [],
             currentPage: 1,
-            itemsPerPage: 10,
+            itemsPerPage: 5,
             totalItems: 0,
         };
     },
