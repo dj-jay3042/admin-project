@@ -189,11 +189,11 @@ export default {
         loadData() {
             axios.get('http://127.0.0.1:8000/api/data/getUser')
                 .then(response => {
-                    console.log(response.data);
                     this.data = response.data;
                     this.totalItems = this.data.length;
                 })
                 .catch(error => {
+                    alert("Something went wrong while loading data!");
                     console.error(error);
                 });
         },
@@ -206,12 +206,12 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
-
+                    this.loadData();
                 })
                 .catch(error => {
+                    alert("Something went wrong while deleting data!");
                     console.error(error);
                 });
-            this.loadData();
         },
     },
     beforeMount() {
