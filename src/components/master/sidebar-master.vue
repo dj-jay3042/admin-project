@@ -38,20 +38,20 @@
                     <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link active">
+                        <button id="default" v-on:click="activateButton(0); getTab('indexFile');" :class="{ 'active': activeButtonIndex === 0 }" class="nav-link link w-100">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Dashboard
                             </p>
-                        </a>
+                        </button>
                     </li>
                     <li class="nav-item">
-                        <a href="forms.html" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                        <button v-on:click="activateButton(1); getTab('formFile');" :class="{ 'active': activeButtonIndex === 1 }" class="nav-link w-100 link">
+                            <i class="nav-icon fas fa-user-plus"></i>
                             <p>
-                                Widgets
+                                Add User
                             </p>
-                        </a>
+                        </button>
                     </li>
                 </ul>
             </nav>
@@ -65,5 +65,26 @@
 <script>
 export default {
     name: "sidebarFile",
+    data() {
+        return {
+            activeButtonIndex: 0
+        };
+    },
+    methods: {
+        activateButton(index) {
+            this.activeButtonIndex = index;
+        }
+    },
+    props: {
+        getTab: Function
+    },
 };
 </script>
+
+<style scoped>
+.link {
+    background: none;
+    text-align: left;
+    border: none;
+}
+</style>

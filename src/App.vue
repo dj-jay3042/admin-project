@@ -1,14 +1,37 @@
 <template>
-<indexFile />
+    <headerFile />
+    <sidebarFile :getTab="getComp"/>
+
+    <component :is="tab" />
+
+    <footerFile />
 </template>
 
 <script>
-import indexFile from './components/index-cmp.vue'
+import headerFile from "./components/master/header-master.vue";
+import sidebarFile from "./components/master/sidebar-master.vue";
+import footerFile from "./components/master/footer-master.vue";
+import indexFile from './components/index-cmp.vue';
+import formFile from './components/form-cmp.vue';
 
 export default {
     name: 'App',
     components: {
-        indexFile
+        headerFile,
+        sidebarFile,
+        footerFile,
+        indexFile,
+        formFile
+    },
+    data() {
+        return {
+            tab: "indexFile"
+        }
+    },
+    methods: {
+        getComp(tab) {
+            this.tab = tab
+        }
     }
 }
 </script>

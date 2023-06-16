@@ -1,30 +1,7 @@
 <template>
 <div>
     <div class="wrapper">
-        <headerFile />
-        <sidebarFile />
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">Dashboard</h1>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Dashboard v1</li>
-                            </ol>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!-- /.row -->
-                </div>
-                <!-- /.container-fluid -->
-            </div>
-            <!-- /.content-header -->
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
@@ -35,12 +12,12 @@
                                 <div class="inner">
                                     <h3>{{ time }}</h3>
 
-                                    <p>Current Time</p>
+                                    <p>{{ currentDate }}</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-clock"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                                <a href="#" class="small-box-footer">Current Time <i class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -49,49 +26,19 @@
                                 <div class="inner">
                                     <h3>{{ Time }}</h3>
 
-                                    <p>Worked Hours</p>
+                                    <p>{{ currentDate }}</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-clock"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                                <a href="#" class="small-box-footer">Worked Hours <i class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     </div>
-                    <!-- Small boxes (Stat box) -->
-                    <div class="row">
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                    <h3>{{ count }}</h3>
-
-                                    <p>New Orders</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-bag"></i>
-                                </div>
-                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <button type="button" class="btn btn-block bg-gradient-success" v-on:click="increment()">
-                                Increment
-                            </button>
-                            <button type="button" class="btn btn-block bg-gradient-danger" v-on:click="decrement()">
-                                Decrement
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /.row -->
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">DataTable with default features</h3>
-                            </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
@@ -109,11 +56,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="item in data" v-bind:key="item.id" :id="'row' + item.id">
+                                        <tr v-for="item, index in data.slice(startIndex, endIndex + 1)" v-bind:key="item.id" :id="'row' + item.id">
                                             <td>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-success" type="checkbox" :id="'chk' + item.id" v-model="selectAll">
-                                                    <label :for="'chk' + item.id" class="custom-control-label">{{ item.id }}</label>
+                                                    <input class="custom-control-input custom-control-input-success" type="checkbox" :id="'chk' + item.id" :checked="chkAll">
+                                                    <label :for="'chk' + item.id" class="custom-control-label">{{ getSequentialId(index) }}</label>
                                                 </div>
                                             </td>
                                             <td :id="'row' + item.id + 'username'">{{ item.username }}</td>
@@ -129,6 +76,21 @@
                                             </td>
                                         </tr>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="col-sm-12 col-md-7">
+                                                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                        <ul class="pagination">
+                                                            <li class="paginate_button page-item previous" id="example1_previous" :class="{'disabled': currentPage === 1}"><button class="page-link" @click="previousPage">Previous</button></li>
+                                                            <li class="paginate_button page-item" :class="{ 'active': currentPage === page }" v-for="page in totalPages" :key="page" @click="currentPage = page"><button class="page-link">{{ page }}</button></li>
+                                                            <li class="paginate_button page-item next" id="example1_next" :class="{'disabled': currentPage === totalPages}"><button class="page-link" @click="nextPage">Next</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -136,15 +98,11 @@
                 </div>
             </section>
         </div>
-        <footerFile />
     </div>
 </div>
 </template>
 
 <script>
-import headerFile from "./master/header-master.vue";
-import sidebarFile from "./master/sidebar-master.vue";
-import footerFile from "./master/footer-master.vue";
 import axios from 'axios';
 
 export default {
@@ -155,9 +113,25 @@ export default {
             data: [],
             Time: "09:30:00",
             time: new Date().toLocaleTimeString(),
+            currentDate: '',
             selectAll: false,
-            checkedItems: []
+            chkAll: false,
+            checkedItems: [],
+            currentPage: 1,
+            itemsPerPage: 5,
+            totalItems: 0,
         };
+    },
+    computed: {
+        startIndex() {
+            return (this.currentPage - 1) * this.itemsPerPage;
+        },
+        endIndex() {
+            return this.startIndex + this.itemsPerPage - 1;
+        },
+        totalPages() {
+            return Math.ceil(this.totalItems / this.itemsPerPage);
+        },
     },
     mounted() {
         setInterval(() => {
@@ -192,11 +166,24 @@ export default {
         decrement() {
             this.count != 0 ? this.count-- : this.count;
         },
+        getSequentialId(index) {
+            return index + this.startIndex + 1;
+        },
         toggleCheckboxes() {
             if (this.selectAll) {
-                this.checkedItems = this.data.map(item => item.id);
+                this.chkAll = true;
             } else {
-                this.checkedItems = [];
+                this.chkAll = false;
+            }
+        },
+        previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
             }
         },
         loadData() {
@@ -204,6 +191,7 @@ export default {
                 .then(response => {
                     console.log(response.data);
                     this.data = response.data;
+                    this.totalItems = this.data.length;
                 })
                 .catch(error => {
                     console.error(error);
@@ -227,12 +215,15 @@ export default {
         },
     },
     beforeMount() {
-        this.loadData();
-    },
-    components: {
-        headerFile,
-        sidebarFile,
-        footerFile,
+        this.loadData(); {
+            const date = new Date();
+            const options = {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            };
+            this.currentDate = date.toLocaleDateString('en-US', options);
+        }
     },
 };
 </script>
