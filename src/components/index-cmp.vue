@@ -350,7 +350,7 @@ export default {
         applyFilter() {
             this.getValues();
 
-            const filteredData = this.data.filter((item) => {
+            const filteredData = this.Data.filter((item) => {
                 return this.fltrType.every((field, index) => {
                     return String(item[field]) === this.fltrVal[index];
                 });
