@@ -35,6 +35,53 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
+                <h3 class="card-title"><b>Select Columns :</b></h3><br>
+
+                <div class="form-group clearfix w-100">
+                    <div class="icheck-primary d-inline" v-for="item, index in fields" v-bind:key="item">
+                        <input type="checkbox" :id="'checkboxPrimary' + index" v-model="fields" :value="item">
+                        <label :for="'checkboxPrimary' + index"> {{ item }}
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                </div>
+            </div>
+            <div class="card-header">
+                <h3 class="card-title"><b>Apply Filter :</b></h3><br>
+
+                <div class="input-group input-group mb-3">
+                    <div class="input-group-prepend">
+                        <select class="btn btn-secondary dropdown-toggle" v-model="FltrType">
+                            <option value="" selected disabled>Select Field</option>
+                            <option v-for="item in columns" v-bind:key="item" :value="item">{{ item }}</option>
+                        </select>
+                    </div>
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" v-model="FltrVal" placeholder="Enter Filter Value......">
+                    <span class="input-group-append">
+                        <button type="submit" class="btn btn-info btn-flat" v-on:click="applyFilter()">Go!</button>
+                    </span>
+                    <span class="input-group-append">
+                        <button type="button" class="btn btn-success btn-flat" id="btnAdd" v-on:click="addFilter()">+ Add Filter</button>
+                    </span>
+                </div>
+
+                <div id="container">
+                    <div class="input-group input-group mb-3" v-for="filter in filters" v-bind:key="filter" :id="filter">
+                        <div class="input-group-prepend">
+                            <select name="fltrType" class="btn btn-secondary dropdown-toggle" :id="'type' + filter">
+                                <option value="" selected disabled>Select Field</option>
+                                <option v-for="item in columns" v-bind:key="item" :value="item">{{ item }}</option>
+                            </select>
+                        </div>
+                        <!-- /btn-group -->
+                        <input type="text" class="form-control" name="fltrVal" placeholder="Enter Filter Value......" :id="'val' + filter">
+                        <span class="input-group-append">
+                            <button type="submit" class="btn btn-danger btn-flat" v-on:click="removeFilter(filter)">- Remove Filter</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header">
                 <div class="btn-group w-50">
                     <button type="button" class="btn btn-secondary" v-on:click="createExcel()">
                         Create Excel Sheet
@@ -45,21 +92,6 @@
                     <button type="button" class="btn btn-secondary" v-on:click="createCSV()">
                         Create CSV File
                     </button>
-                </div>
-            </div>
-            <div class="card-header">
-                <!-- <select class="select2 w-100" multiple="multiple" data-placeholder="Select fields" id="myDropdown" v-on:load="handleChange()">
-                    <option v-for="item in columns" v-bind:key="item" :value="item">
-                        {{ item }}
-                    </option>
-                </select> -->
-
-                <div class="form-group clearfix w-100">
-                    <div class="icheck-primary d-inline" v-for="item, index in columns" v-bind:key="item">
-                        <input type="checkbox" :id="'checkboxPrimary' + index" v-model="fields" :value="item">
-                        <label :for="'checkboxPrimary' + index"> {{ item }}
-                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -133,16 +165,23 @@
 
 <script>
 import axios from "axios";
+import $ from "jquery";
 
 export default {
     name: "indexFile",
     data() {
         return {
             count: 0,
-            fields: ['username'],
-            selectedValues: [],
+            fields: ['username', 'password', 'usertype'],
+            countFilter: 0,
+            filters: [],
+            fltrType: [],
+            fltrVal: [],
+            FltrType: "",
+            FltrVal: "",
             columns: [],
             data: [],
+            Data: [],
             Time: "00:00:00",
             time: new Date().toLocaleTimeString(),
             currentDate: "",
@@ -188,6 +227,8 @@ export default {
             );
 
             var dTime = cTime - tTime;
+            if (dTime > ((3 * 60 * 60 * 1000) + (45 * 60 * 1000)))
+                dTime -= (45 * 60 * 1000);
             var h = Math.floor(dTime / (1000 * 60 * 60));
             var m = Math.floor((dTime % (1000 * 60 * 60)) / (1000 * 60));
             var s = Math.floor((dTime % (1000 * 60)) / 1000);
@@ -237,7 +278,8 @@ export default {
                 .get("http://127.0.0.1:8000/api/data/getColumns")
                 .then((response) => {
                     this.columns = response.data;
-                    this.columns.shift();
+                    this.fields = [...this.columns];
+                    this.fields.shift();
                 })
                 .catch((error) => {
                     alert("Something went wrong while loading data!");
@@ -249,6 +291,7 @@ export default {
                 .get("http://127.0.0.1:8000/api/data/getUser")
                 .then((response) => {
                     this.data = response.data;
+                    this.Data = response.data;
                     this.totalItems = this.data.length;
                 })
                 .catch((error) => {
@@ -285,11 +328,41 @@ export default {
         createExcel() {},
         createPDF() {},
         createCSV() {},
+        addFilter() {
+            if (this.countFilter < 3) {
+                this.countFilter++;
+                this.filters.push("fltr" + this.countFilter);
+            }
+        },
+        removeFilter(id) {
+            $("#" + id).remove();
+        },
+        getValues() {
+            this.fltrType = [];
+            this.fltrVal = [];
+            this.fltrVal.push(this.FltrVal);
+            this.fltrType.push(this.FltrType);
+            this.filters.forEach(element => {
+                this.fltrVal.push($("#val" + element).val());
+                this.fltrType.push($("#type" + element).val());
+            });
+        },
+        applyFilter() {
+            this.getValues();
+
+            const filteredData = this.data.filter((item) => {
+                return this.fltrType.every((field, index) => {
+                    return String(item[field]) === this.fltrVal[index];
+                });
+            });
+            this.totalItems = filteredData.length;
+            this.data = [...filteredData];
+        },
     },
     beforeMount() {
         this.loadCurrentDate();
-        this.loadData();
         this.loadColumn();
+        this.loadData();
     },
 };
 </script>

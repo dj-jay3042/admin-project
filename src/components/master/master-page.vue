@@ -98,7 +98,7 @@
 
         <div class="sidebar-custom">
             <button class="link btn btn-link"><i class="fas fa-cogs"></i></button>
-            <strong style="color: white;"><b>Developed By <a href="https://dj-jay3042.github.io" target="_blank">Jay Chauhan</a></b></strong>
+            <strong style="color: white;"><b>Developed By <a href="https://dj-jay3042.github.io" target="_blank">Jay</a></b></strong>
         </div>
         <!-- /.sidebar-custom -->
     </aside>
