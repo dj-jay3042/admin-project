@@ -12,7 +12,7 @@
                 <div class="icon">
                     <i class="ion ion-clock"></i>
                 </div>
-                <a href="#" class="small-box-footer">Current Time <i class="fas fa-arrow-circle-right"></i></a>
+                <button class="small-box-footer link w-100">Current Time <i class="fas fa-arrow-circle-right"></i></button>
             </div>
         </div>
         <div class="col-lg-6">
@@ -26,7 +26,7 @@
                 <div class="icon">
                     <i class="ion ion-clock"></i>
                 </div>
-                <a href="#" class="small-box-footer">Worked Hours <i class="fas fa-arrow-circle-right"></i></a>
+                <button class="small-box-footer link w-100">Worked Hours <i class="fas fa-arrow-circle-right"></i></button>
             </div>
         </div>
     </div>
@@ -48,11 +48,19 @@
                 </div>
             </div>
             <div class="card-header">
-                <select class="select2 w-100" multiple="multiple" data-placeholder="Select fields" id="myDropdown" v-on:change="handleChange()">
+                <!-- <select class="select2 w-100" multiple="multiple" data-placeholder="Select fields" id="myDropdown" v-on:load="handleChange()">
                     <option v-for="item in columns" v-bind:key="item" :value="item">
                         {{ item }}
                     </option>
-                </select>
+                </select> -->
+
+                <div class="form-group clearfix w-100">
+                    <div class="icheck-primary d-inline" v-for="item, index in columns" v-bind:key="item">
+                        <input type="checkbox" :id="'checkboxPrimary' + index" v-model="fields" :value="item">
+                        <label :for="'checkboxPrimary' + index"> {{ item }}
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
@@ -77,15 +85,12 @@
                                 </div>
                             </td>
                             <td v-for="fld in fields" v-bind:key="fld">
-                                <p :class="update ? 'display' : ''">{{ item[fld] }}</p>
-                                <input type="text" :class="!update ? 'display' : ''" :value="item[fld]" />
+                                <p :class="(item.id == editId) ? (update) ? 'display' : '' : ''">{{ item[fld] }}</p>
+                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : '' : 'display'" :value="item[fld]" />
                             </td>
 
                             <td>
-                                <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="
-                      edit(item.id);
-                      update = !update;
-                    ">
+                                <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="update = !update; editId=item.id;">
                                     <i class="fas fa-edit"></i><strong>Edit </strong>
                                 </button>
                                 <button class="btn btn-app bg-danger" v-on:click="remove(item.id)">
@@ -128,14 +133,13 @@
 
 <script>
 import axios from "axios";
-// import jsPDF from 'jspdf';
 
 export default {
     name: "indexFile",
     data() {
         return {
             count: 0,
-            fields: [],
+            fields: ['username'],
             selectedValues: [],
             columns: [],
             data: [],
@@ -150,6 +154,7 @@ export default {
             totalItems: 0,
             selectedRows: [],
             update: false,
+            editId: 0
         };
     },
     computed: {
@@ -198,7 +203,7 @@ export default {
         handleChange() {
             const dropdown = document.getElementById("myDropdown");
             const selectedValues = Array.from(dropdown.selectedOptions).map(option => option.value);
-
+            alert("kajdfjka");
             console.log(selectedValues);
         },
         increment() {
@@ -261,7 +266,7 @@ export default {
             this.currentDate = date.toLocaleDateString("en-US", options);
         },
         edit(id) {
-            alert("Selected Row Id Is : row" + id);
+            this.editId = id;
         },
         remove(id) {
             axios
