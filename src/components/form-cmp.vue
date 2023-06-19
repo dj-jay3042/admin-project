@@ -59,6 +59,9 @@ export default {
             showPassword: false,
         }
     },
+    props: {
+        getTab: Function
+    },
     methods: {
         addUser() {
             axios.post('http://127.0.0.1:8000/api/data/addUser', {
@@ -67,8 +70,8 @@ export default {
                     usertype: this.usertype,
                 })
                 .then(response => {
-                    alert("User Created Successfully!!!");
                     console.log(response);
+                    this.getTab("indexFile");
                 })
                 .catch(error => {
                     alert("Something Went Wrong!!!");
