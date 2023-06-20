@@ -24,7 +24,7 @@
                     <p>{{ currentDate }}</p>
                 </div>
                 <div class="icon">
-                    <i class="ion ion-clock"></i>
+                    <i class="fas fa-user-clock"></i>
                 </div>
                 <button class="small-box-footer link w-100">Worked Hours <i class="fas fa-arrow-circle-right"></i></button>
             </div>
@@ -38,7 +38,7 @@
                 <h3 class="card-title"><b>Select Columns :</b></h3><br>
 
                 <div class="form-group clearfix w-100">
-                    <div class="icheck-primary d-inline" v-for="item, index in fields" v-bind:key="item">
+                    <div class="icheck-primary d-inline" v-for="item, index in custField" v-bind:key="item">
                         <input type="checkbox" :id="'checkboxPrimary' + index" v-model="fields" :value="item">
                         <label :for="'checkboxPrimary' + index"> {{ item }}
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -66,31 +66,37 @@
                 </div>
 
                 <div id="container">
-                    <div class="input-group input-group mb-3" v-for="filter in filters" v-bind:key="filter" :id="filter">
-                        <div class="input-group-prepend">
-                            <select name="fltrType" class="btn btn-secondary dropdown-toggle" :id="'type' + filter">
-                                <option value="" selected disabled>Select Field</option>
-                                <option v-for="item in columns" v-bind:key="item" :value="item">{{ item }}</option>
-                            </select>
+                    <div v-for="filter in filters" v-bind:key="filter" :id="filter">
+                        <div class="input-group input-group mb-3">
+                            <div class="input-group-prepend">
+                                <select name="fltrType" class="btn btn-secondary dropdown-toggle" :id="'type' + filter" v-on:change="validateFilter(filter)">
+                                    <option value="" selected disabled>Select Field</option>
+                                    <option v-for="item in columns" v-bind:key="item" :value="item">{{ item }}</option>
+                                </select>
+                            </div>
+                            <!-- /btn-group -->
+                            <input type="text" class="form-control" name="fltrVal" placeholder="Enter Filter Value......" :id="'val' + filter">
+                            <span class="input-group-append">
+                                <button type="submit" class="btn btn-danger btn-flat" v-on:click="removeFilter(filter)">- Remove Filter</button>
+                            </span>
                         </div>
-                        <!-- /btn-group -->
-                        <input type="text" class="form-control" name="fltrVal" placeholder="Enter Filter Value......" :id="'val' + filter">
-                        <span class="input-group-append">
-                            <button type="submit" class="btn btn-danger btn-flat" v-on:click="removeFilter(filter)">- Remove Filter</button>
-                        </span>
+                        <div class="alert alert-danger" :class="(errorId === filter) ? '' : 'display'">
+                            <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                            Can not select same filter value
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="card-header">
                 <div class="btn-group w-50">
                     <button type="button" class="btn btn-secondary" v-on:click="createExcel()">
-                        Create Excel Sheet
+                        <i class="fas fa-file-excel"></i>&nbsp; Create Excel Sheet
                     </button>
                     <button type="button" class="btn btn-secondary" v-on:click="createPDF()">
-                        Create PDF File
+                        <i class="fas fa-file-pdf"></i>&nbsp; Create PDF File
                     </button>
                     <button type="button" class="btn btn-secondary" v-on:click="createCSV()">
-                        Create CSV File
+                        <i class="fas fa-file-csv"></i>&nbsp; Create CSV File
                     </button>
                 </div>
             </div>
@@ -116,9 +122,10 @@
                                     <label :for="'chk' + item.id" class="custom-control-label">{{ getSequentialId(index) }}</label>
                                 </div>
                             </td>
+                            
                             <td v-for="fld in fields" v-bind:key="fld">
                                 <p :class="(item.id == editId) ? (update) ? 'display' : '' : ''">{{ item[fld] }}</p>
-                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : '' : 'display'" :value="item[fld]" />
+                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'" :value="item[fld]" />
                             </td>
 
                             <td>
@@ -131,32 +138,28 @@
                             </td>
                         </tr>
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                <div class="col-sm-12 col-md-7">
-                                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                                        <ul class="pagination">
-                                            <li class="paginate_button page-item previous" id="example1_previous" :class="{ disabled: currentPage === 1 }">
-                                                <button class="page-link" @click="previousPage">
-                                                    Previous
-                                                </button>
-                                            </li>
-                                            <li class="paginate_button page-item" :class="{ active: currentPage === page }" v-for="page in totalPages" :key="page" @click="currentPage = page">
-                                                <button class="page-link">{{ page }}</button>
-                                            </li>
-                                            <li class="paginate_button page-item next" id="example1_next" :class="{ disabled: currentPage === totalPages }">
-                                                <button class="page-link" @click="nextPage">
-                                                    Next
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+            </div>
+            <div class="card-footer">
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous" id="example1_previous" :class="{ disabled: currentPage === 1 }">
+                                <button class="page-link" v-on:click="previousPage">
+                                    Previous
+                                </button>
+                            </li>
+                            <li class="paginate_button page-item" :class="{ active: currentPage === page }" v-for="page in totalPages" :key="page" @click="currentPage = page">
+                                <button class="page-link">{{ page }}</button>
+                            </li>
+                            <li class="paginate_button page-item next" id="example1_next" :class="{ disabled: currentPage === totalPages }">
+                                <button class="page-link" v-on:click="nextPage">
+                                    Next
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -172,6 +175,7 @@ export default {
     data() {
         return {
             count: 0,
+            custField: ['username', 'password', 'usertype'],
             fields: ['username', 'password', 'usertype'],
             countFilter: 0,
             filters: [],
@@ -193,7 +197,8 @@ export default {
             totalItems: 0,
             selectedRows: [],
             update: false,
-            editId: 0
+            editId: 0,
+            errorId: ""
         };
     },
     computed: {
@@ -241,12 +246,6 @@ export default {
         }, 1);
     },
     methods: {
-        handleChange() {
-            const dropdown = document.getElementById("myDropdown");
-            const selectedValues = Array.from(dropdown.selectedOptions).map(option => option.value);
-            alert("kajdfjka");
-            console.log(selectedValues);
-        },
         increment() {
             this.count++;
         },
@@ -349,15 +348,24 @@ export default {
         },
         applyFilter() {
             this.getValues();
-
-            const filteredData = this.Data.filter((item) => {
-                return this.fltrType.every((field, index) => {
-                    return String(item[field]) === this.fltrVal[index];
+            if (this.errorId === "") {
+                const filteredData = this.Data.filter((item) => {
+                    return this.fltrType.every((field, index) => {
+                        return String(item[field]) === this.fltrVal[index];
+                    });
                 });
-            });
-            this.totalItems = filteredData.length;
-            this.data = [...filteredData];
+                this.totalItems = filteredData.length;
+                this.data = [...filteredData];
+            }
         },
+        validateFilter(filter) {
+            this.getValues();
+            var set = new Set(this.fltrType);
+            if (this.fltrType.length != set.size)
+                this.errorId = filter;
+            else
+                this.errorId = "";
+        }
     },
     beforeMount() {
         this.loadCurrentDate();
