@@ -106,7 +106,7 @@
                         <tr>
                             <th>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input custom-control-input-success custom-control-input-outline" type="checkbox" id="customCheckbox5" v-on:change="toggleCheckboxes" v-model="selectAll" />
+                                    <input class="custom-control-input custom-control-input-success custom-control-input-outline" type="checkbox" id="customCheckbox5" v-on:change="toggleCheckboxes" v-model="selectAll" :checked="chkAll" />
                                     <label for="customCheckbox5" class="custom-control-label">Id</label>
                                 </div>
                             </th>
@@ -122,10 +122,10 @@
                                     <label :for="'chk' + item.id" class="custom-control-label">{{ getSequentialId(index) }}</label>
                                 </div>
                             </td>
-                            
+
                             <td v-for="fld in fields" v-bind:key="fld">
                                 <p :class="(item.id == editId) ? (update) ? 'display' : '' : ''">{{ item[fld] }}</p>
-                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'" :value="item[fld]" />
+                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'"  :value="item[fld]" />
                             </td>
 
                             <td>
