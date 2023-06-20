@@ -125,7 +125,7 @@
 
                             <td v-for="fld in fields" v-bind:key="fld">
                                 <p :class="(item.id == editId) ? (update) ? 'display' : '' : ''">{{ item[fld] }}</p>
-                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'"  :value="item[fld]" />
+                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'" :value="item[fld]" />
                             </td>
 
                             <td>
@@ -325,7 +325,32 @@ export default {
                 });
         },
         createExcel() {},
-        createPDF() {},
+        createPDF() {
+            const requestData = {
+                fltrType: this.fltrType,
+                fltrVal: this.fltrVal,
+                fields: this.fields,
+                ids: this.selectedRows
+            };
+
+            axios
+                .post("http://127.0.0.1:8000/api/data/createPDF", {
+                    responseType: 'blob',
+                    params: requestData
+                })
+                .then(response => {
+                    const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = fileURL;
+                    link.setAttribute('download', 'pdf-file.pdf');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
         createCSV() {},
         addFilter() {
             if (this.countFilter < 3) {
