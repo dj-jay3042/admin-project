@@ -334,14 +334,14 @@ export default {
             };
 
             axios
-                .post("http://127.0.0.1:8000/api/data/createPDF", {
+                .get("http://127.0.0.1:8000/api/data/createPDF", {
                     responseType: 'blob',
                     params: requestData
                 })
                 .then(response => {
-                    const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
-                    link.href = fileURL;
+                    link.href = url;
                     link.setAttribute('download', 'pdf-file.pdf');
                     document.body.appendChild(link);
                     link.click();
