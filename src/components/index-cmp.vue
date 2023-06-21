@@ -258,8 +258,10 @@ export default {
         toggleCheckboxes() {
             if (this.selectAll) {
                 this.chkAll = true;
+                this.selectedRows = this.data.map(item => item.id);
             } else {
                 this.chkAll = false;
+                this.selectedRows = [];
             }
         },
         previousPage() {
@@ -324,7 +326,31 @@ export default {
                     console.error(error);
                 });
         },
-        createExcel() {},
+        createExcel() {
+            const requestData = {
+                fltrType: this.fltrType,
+                fltrVal: this.fltrVal,
+                fields: this.fields,
+                ids: this.selectedRows
+            };
+
+            axios
+                .get("http://127.0.0.1:8000/api/data/createExcel", {
+                    responseType: 'blob',
+                    params: requestData
+                })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'data.xlsx');
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
         createPDF() {
             const requestData = {
                 fltrType: this.fltrType,
@@ -342,7 +368,7 @@ export default {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'pdf-file.pdf');
+                    link.setAttribute('download', 'data.pdf');
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -351,7 +377,31 @@ export default {
                     console.error(error);
                 });
         },
-        createCSV() {},
+        createCSV() {
+            const requestData = {
+                fltrType: this.fltrType,
+                fltrVal: this.fltrVal,
+                fields: this.fields,
+                ids: this.selectedRows
+            };
+
+            axios
+                .get("http://127.0.0.1:8000/api/data/createCSV", {
+                    responseType: 'blob',
+                    params: requestData
+                })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'data.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
         addFilter() {
             if (this.countFilter < 3) {
                 this.countFilter++;
