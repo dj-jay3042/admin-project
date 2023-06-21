@@ -124,7 +124,7 @@
                             </td>
 
                             <td v-for="fld in fields" v-bind:key="fld">
-                                <input type="text" class="form-control" v-if="editId == item.id" v-model="update[fld]" :id="fld+item.id"/>
+                                <input type="text" class="form-control" v-if="editId == item.id" v-model="update[fld]" :id="fld+item.id" />
                                 <p v-else>{{ item[fld] }}</p>
                             </td>
 
@@ -445,15 +445,32 @@ export default {
         },
         applyFilter() {
             this.getValues();
-            if (this.errorId === "") {
-                const filteredData = this.Data.filter((item) => {
-                    return this.fltrType.every((field, index) => {
-                        return String(item[field]) === this.fltrVal[index];
-                    });
-                });
-                this.totalItems = filteredData.length;
-                this.data = [...filteredData];
+            const requestData = {
+                fltrType: this.fltrType,
+                fltrVal: this.fltrVal,
             }
+            // if (this.errorId === "") {
+            //     const filteredData = this.Data.filter((item) => {
+            //         return this.fltrType.every((field, index) => {
+            //             return String(item[field]) === this.fltrVal[index];
+            //         });
+            //     });
+            //     this.totalItems = filteredData.length;
+            //     this.data = [...filteredData];
+            // }
+            axios
+                .get("http://127.0.0.1:8000/api/data/applyFilter", {
+                    params: requestData
+                })
+                .then((response) => {
+                    this.data = response.data;
+                    this.Data = response.data;
+                    this.totalItems = this.data.length;
+                })
+                .catch((error) => {
+                    alert("Something went wrong while loading data!");
+                    console.error(error);
+                });
         },
         validateFilter(filter) {
             this.getValues();
