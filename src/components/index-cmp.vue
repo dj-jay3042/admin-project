@@ -80,7 +80,7 @@
                                 <button type="submit" class="btn btn-danger btn-flat" v-on:click="removeFilter(filter)">- Remove Filter</button>
                             </span>
                         </div>
-                        <div class="alert alert-danger" :class="(errorId === filter) ? '' : 'display'">
+                        <div class="alert alert-danger" v-if="errorId == filter">
                             <h5><i class="icon fas fa-ban"></i> Alert!</h5>
                             Can not select same filter value
                         </div>
@@ -124,17 +124,22 @@
                             </td>
 
                             <td v-for="fld in fields" v-bind:key="fld">
-                                <p :class="(item.id == editId) ? (update) ? 'display' : '' : ''">{{ item[fld] }}</p>
-                                <input type="text" :class="(item.id == editId) ? (!update) ? 'display' : 'form-control' : 'display'" :value="item[fld]" />
+                                <input type="text" class="form-control" v-if="editId == item.id" v-model="update[fld]" :id="fld+item.id"/>
+                                <p v-else>{{ item[fld] }}</p>
                             </td>
 
                             <td>
-                                <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="update = !update; editId=item.id;">
-                                    <i class="fas fa-edit"></i><strong>Edit </strong>
-                                </button>
-                                <button class="btn btn-app bg-danger" v-on:click="remove(item.id)">
-                                    <i class="fas fa-trash"></i><strong>Delete </strong>
-                                </button>
+                                <div v-if="editId == item.id">
+                                    <button type="button" class="btn btn-block btn-primary" v-on:click="updateUser()">Update</button>
+                                </div>
+                                <div v-else>
+                                    <button class="btn btn-app bg-success toastrDefaultSuccess" v-on:click="editId=item.id; edit(item.id)">
+                                        <i class="fas fa-edit"></i><strong>Edit </strong>
+                                    </button>
+                                    <button class="btn btn-app bg-danger" v-on:click="remove(item.id)">
+                                        <i class="fas fa-trash"></i><strong>Delete </strong>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -174,7 +179,6 @@ export default {
     name: "indexFile",
     data() {
         return {
-            count: 0,
             custField: ['username', 'password', 'usertype'],
             fields: ['username', 'password', 'usertype'],
             countFilter: 0,
@@ -196,9 +200,9 @@ export default {
             itemsPerPage: 5,
             totalItems: 0,
             selectedRows: [],
-            update: false,
-            editId: 0,
-            errorId: ""
+            editId: "",
+            errorId: "",
+            update: []
         };
     },
     computed: {
@@ -246,12 +250,6 @@ export default {
         }, 1);
     },
     methods: {
-        increment() {
-            this.count++;
-        },
-        decrement() {
-            this.count != 0 ? this.count-- : this.count;
-        },
         getSequentialId(index) {
             return index + this.startIndex + 1;
         },
@@ -310,7 +308,30 @@ export default {
             this.currentDate = date.toLocaleDateString("en-US", options);
         },
         edit(id) {
-            this.editId = id;
+            var item = this.data.find((item) => item.id === id);
+            this.fields.forEach(element => {
+                this.update[element] = item[element];
+            });
+        },
+        updateUser() {
+            var update = {};
+            for (let key in this.update) {
+                update[key] = this.update[key];
+            }
+            axios
+                .post("http://127.0.0.1:8000/api/data/updateUser", {
+                    id: this.editId,
+                    data: update,
+                })
+                .then((response) => {
+                    console.log(response);
+                    this.loadData();
+                    this.editId = '';
+                })
+                .catch((error) => {
+                    alert("Something went wrong while updating data!");
+                    console.error(error);
+                });
         },
         remove(id) {
             axios
@@ -403,12 +424,13 @@ export default {
                 });
         },
         addFilter() {
-            if (this.countFilter < 3) {
+            if (this.countFilter < this.custField.length) {
                 this.countFilter++;
                 this.filters.push("fltr" + this.countFilter);
             }
         },
         removeFilter(id) {
+            this.countFilter--;
             $("#" + id).remove();
         },
         getValues() {
@@ -436,11 +458,11 @@ export default {
         validateFilter(filter) {
             this.getValues();
             var set = new Set(this.fltrType);
-            if (this.fltrType.length != set.size)
+            if (this.fltrType.length !== set.size)
                 this.errorId = filter;
             else
                 this.errorId = "";
-        }
+        },
     },
     beforeMount() {
         this.loadCurrentDate();
@@ -450,7 +472,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .display {
     display: none;
 }
