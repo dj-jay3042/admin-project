@@ -50,7 +50,7 @@
 
                 <div class="input-group input-group mb-3">
                     <div class="input-group-prepend">
-                        <select class="btn btn-secondary dropdown-toggle" v-model="FltrType">
+                        <select class="btn btn-secondary dropdown-toggle" v-model="FltrType" v-on:change="validateFilter('first')">
                             <option value="" selected disabled>Select Field</option>
                             <option v-for="item in columns" v-bind:key="item" :value="item">{{ item }}</option>
                         </select>
@@ -63,6 +63,10 @@
                     <span class="input-group-append">
                         <button type="button" class="btn btn-success btn-flat" id="btnAdd" v-on:click="addFilter()">+ Add Filter</button>
                     </span>
+                </div>
+                <div class="alert alert-danger" v-if="errorId == 'first'">
+                    <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                    Can not select same filter value
                 </div>
 
                 <div id="container">
@@ -348,80 +352,92 @@ export default {
                 });
         },
         createExcel() {
-            const requestData = {
-                fltrType: this.fltrType,
-                fltrVal: this.fltrVal,
-                fields: this.fields,
-                ids: this.selectedRows
-            };
+            if (this.selectedRows.length != 0) {
+                const requestData = {
+                    fltrType: this.fltrType,
+                    fltrVal: this.fltrVal,
+                    fields: this.fields,
+                    ids: this.selectedRows
+                };
 
-            axios
-                .get("http://127.0.0.1:8000/api/data/createExcel", {
-                    responseType: 'blob',
-                    params: requestData
-                })
-                .then(response => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'data.xlsx');
-                    document.body.appendChild(link);
-                    link.click();
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                axios
+                    .get("http://127.0.0.1:8000/api/data/createExcel", {
+                        responseType: 'blob',
+                        params: requestData
+                    })
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'data.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } else {
+                alert("Select IDs!!!");
+            }
         },
         createPDF() {
-            const requestData = {
-                fltrType: this.fltrType,
-                fltrVal: this.fltrVal,
-                fields: this.fields,
-                ids: this.selectedRows
-            };
+            if (this.selectedRows.length != 0) {
+                const requestData = {
+                    fltrType: this.fltrType,
+                    fltrVal: this.fltrVal,
+                    fields: this.fields,
+                    ids: this.selectedRows
+                };
 
-            axios
-                .get("http://127.0.0.1:8000/api/data/createPDF", {
-                    responseType: 'blob',
-                    params: requestData
-                })
-                .then(response => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'data.pdf');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                axios
+                    .get("http://127.0.0.1:8000/api/data/createPDF", {
+                        responseType: 'blob',
+                        params: requestData
+                    })
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'data.pdf');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } else {
+                alert("Select IDs!!!");
+            }
         },
         createCSV() {
-            const requestData = {
-                fltrType: this.fltrType,
-                fltrVal: this.fltrVal,
-                fields: this.fields,
-                ids: this.selectedRows
-            };
+            if (this.selectedRows.length != 0) {
+                const requestData = {
+                    fltrType: this.fltrType,
+                    fltrVal: this.fltrVal,
+                    fields: this.fields,
+                    ids: this.selectedRows
+                };
 
-            axios
-                .get("http://127.0.0.1:8000/api/data/createCSV", {
-                    responseType: 'blob',
-                    params: requestData
-                })
-                .then(response => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'data.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                axios
+                    .get("http://127.0.0.1:8000/api/data/createCSV", {
+                        responseType: 'blob',
+                        params: requestData
+                    })
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'data.csv');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } else {
+                alert("Select IDs!!!");
+            }
         },
         addFilter() {
             if (this.countFilter < this.custField.length) {
